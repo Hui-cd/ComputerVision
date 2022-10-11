@@ -1,16 +1,13 @@
-# This is a sample Python script.
+import  numpy as np
+from PIL import Image
+from MyHybridImages import myHybridImages
+low_image = Image.open('/Users/hui/Project/ComputerVision/data/cat.bmp')
+low_image = np.array(low_image)
+low_sigma = 1.0
+high_image = Image.open('/Users/hui/Project/ComputerVision/data/dog.bmp')
+high_image = np.array(high_image)
+high_sigma = 1.0
 
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press ⌘F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+hybrid_image = myHybridImages(low_image, low_sigma, high_image, high_sigma)
+hybrid_image = Image.fromarray(hybrid_image.astype(np.uint8))
+hybrid_image.save('/Users/hui/Project/ComputerVision/data/hybrid_image.png')
