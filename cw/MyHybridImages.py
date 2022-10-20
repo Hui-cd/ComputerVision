@@ -1,6 +1,6 @@
 import math
 import numpy as np
-from MyConvolution import convolve
+from cw.MyConvolution import convolve
 def myHybridImages(lowImage: np.ndarray, lowSigma: float, highImage: np.ndarray, highSigma: float) -> np.ndarray:
     """ Create hybrid images by combining a low-pass and high-pass filtered pair.
         :param lowImage: the image to low-pass filter (either greyscale shape=(rows,cols) or colour shape=(rows,cols,channels))
@@ -18,9 +18,9 @@ def myHybridImages(lowImage: np.ndarray, lowSigma: float, highImage: np.ndarray,
         :rtype numpy.ndarray     """
 
     # Your code here.
-    lowImage = convolve(lowImage, makeGaussianKernel(lowSigma))
-    highImage = highImage - convolve(highImage, makeGaussianKernel(highSigma))
-    return lowImage + highImage
+    lowImage = convolve(lowImage/255, makeGaussianKernel(lowSigma))
+    highImage = (highImage/255) - convolve(highImage/255, makeGaussianKernel(highSigma))
+    return (lowImage + highImage)*255
 
 
 
@@ -36,6 +36,6 @@ def makeGaussianKernel(sigma: float) -> np.ndarray:
         kernel = np.zeros((size, size))
         for i in range(size):
             for j in range(size):
-                kernel[i][j] = math.exp(-((i-size//2)**2+(j-size//2)**2)/(2*sigma**2))
+                kernel[i][j] = np.exp(-((i-size//2)**2+(j-size//2)**2)/(2*sigma**2))
         kernel = kernel / np.sum(kernel)
         return kernel

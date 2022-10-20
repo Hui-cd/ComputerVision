@@ -7,6 +7,7 @@ def convolve(image: np.ndarray, kernel: np.ndarray) -> np.ndarray:
     :rtype numpy.ndarray
      """
     # Your code here. You'll need to vectorise your implementation to ensure it runs # at a reasonable speed.
+    kernel = np.flip(kernel)
     image_colum = image.shape[1]
     image_row = image.shape[0]
     kernel_colum = kernel.shape[1]
@@ -14,11 +15,19 @@ def convolve(image: np.ndarray, kernel: np.ndarray) -> np.ndarray:
     kernel_colum_half = kernel_colum // 2
     kernel_row_half = kernel_row // 2
     image_convolve = np.zeros(image.shape)
-    for i in range(kernel_colum_half+1, image_colum-kernel_colum_half):
-        for j in range(kernel_row_half+1 , image_row-kernel_row_half):
-            sum = 0
-            for k in range(kernel_colum):
-                for l in range(kernel_row):
-                    sum += image[i-kernel_colum_half+k][j-kernel_row_half+l] * kernel[k][l]
-            image_convolve[i][j] = sum
+    if kernel_colum % 2 == 0 or kernel_row % 2 == 0:
+        raise ValueError("Kernel size must be odd")
+    if len(image.shape) == 3:
+        for i in range(image_row):
+            for j in range(image_colum):
+                for k in range(image.shape[2]):
+                    padding_image = np.pad(image[:, :, k], ((kernel_row_half, kernel_row_half), (kernel_colum_half, kernel_colum_half)), 'constant')
+                    image_convolve[i, j, k] = np.sum(padding_image[i:i+kernel_row, j:j+kernel_colum] * kernel)
+
+    else:
+        for i in range(image_row):
+            for j in range(image_colum):
+                padding_image = np.pad(image, ((kernel_row_half, kernel_row_half), (kernel_colum_half, kernel_colum_half)), 'constant')
+                image_convolve[i, j] = np.sum(padding_image[i:i+kernel_row, j:j+kernel_colum] * kernel)
     return image_convolve
+
